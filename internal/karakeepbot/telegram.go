@@ -11,6 +11,9 @@ import (
 	"github.com/go-telegram/bot/models"
 )
 
+const ModeWebhook = "webhook"
+const ModeLongPolling = "long_polling"
+
 // Bot is an alias for tgbotapi.Bot.
 type Bot = tgbotapi.Bot
 
@@ -18,18 +21,31 @@ type Bot = tgbotapi.Bot
 type Telegram struct {
 	*Bot
 	token secret.String
+	mode  string
 }
 
 // createTelegram initializes the Telegram Bot API client.
 func createTelegram(logger *logging.Logger, config *config.TelegramConfig) *Telegram {
 	logger.Debug(fmt.Sprintf("Initializing Telegram Bot API using %s token", config.Token))
 
-	telegramBot, err := tgbotapi.New(config.Token.Value())
+	var opts []tgbotapi.Option
+	mode := ModeLongPolling
+	if config.WebHookUrl != "" && config.WebHookSecretToken != "" && config.ListenAddr != "" {
+		logger.Debug(fmt.Sprintf("Telegram Bot init in webhook mode with url: %s and %s", config.WebHookUrl, config.WebHookSecretToken))
+		mode = ModeWebhook
+		opts = []tgbotapi.Option{
+			tgbotapi.WithWebhookSecretToken(config.WebHookSecretToken),
+			tgbotapi.WithServerURL(config.WebHookUrl),
+		}
+	}
+
+	telegramBot, err := tgbotapi.New(config.Token.Value(), opts...)
 	if err != nil {
 		logger.Fatal("Error creating Telegram Bot API.", "error", err)
 	}
 
-	return &Telegram{Bot: telegramBot, token: config.Token}
+	logger.Info(fmt.Sprintf("Telegram Bot API initialised in %s mode", mode))
+	return &Telegram{Bot: telegramBot, token: config.Token, mode: mode}
 }
 
 // SendNewMessage sends a new message to the user's chat.
@@ -45,6 +61,10 @@ func (t Telegram) SendNewMessage(ctx context.Context, msg *TelegramMessage) erro
 	}
 
 	return nil
+}
+
+func (t *Telegram) GetMode() string {
+	return t.mode
 }
 
 // SendPhotoWithCaption sends a photo with a caption.
