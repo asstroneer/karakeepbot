@@ -80,6 +80,9 @@ func (kb *KarakeepBot) Run() error {
 	kb.telegram.RegisterHandlerMatchFunc(func(*TelegramUpdate) bool { return true }, kb.handler)
 
 	// Start the bot
+	if kb.telegram.GetMode() == ModeWebhook {
+		return kb.telegram.StartAndServeWebhook(ctx)
+	}
 	kb.telegram.Start(ctx)
 
 	return nil

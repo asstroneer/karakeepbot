@@ -18,6 +18,15 @@ allowlist = [-1]
 # (default), the bot will interact with all threads.
 threads = []
 
+# Bot mode: "long_polling" (default) or "webhook"
+# mode = "long_polling"
+
+# Webhook settings (required if mode = "webhook")
+# webhook_url = "https://bot.example.com"
+# webhook_path = "/telegram-webhook"
+# webhook_secret_token = "my-super-secret-token"
+# listen_addr = ":8080"
+
 # ------------------------------------------
 # Karakeep configuration
 # ------------------------------------------

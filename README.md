@@ -109,6 +109,18 @@ Additionally, you can override the configuration values using environment variab
 KARAKEEPBOT_LOGGING_LEVEL=debug KARAKEEPBOT_TELEGRAM_ALLOWLIST=chat_id_1,chat_id_2 karakeepbot
 ```
 
+#### Telegram Webhook Mode
+
+To run the bot in webhook mode instead of long polling, configure the following environment variables:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `KARAKEEPBOT_TELEGRAM_MODE` | Bot mode: `webhook` or `long_polling` | `webhook` |
+| `KARAKEEPBOT_TELEGRAM_WEBHOOK_URL` | External URL where Telegram will send webhooks | `https://bot.example.com` |
+| `KARAKEEPBOT_TELEGRAM_WEBHOOK_PATH` | Path suffix for the webhook endpoint (default: `/telegram-webhook`) | `/telegram-webhook` |
+| `KARAKEEPBOT_TELEGRAM_WEBHOOK_SECRET_TOKEN` | Secret token for webhook validation | `my-secret-token` |
+| `KARAKEEPBOT_TELEGRAM_LISTEN_ADDR` | Internal address for the HTTP server | `:8080` |
+
 ### Security Concerns
 
 To protect your bot from abuse and spam from unauthorized users, `Karakeepbot` implements a **mandatory Chat ID allowlist**.
